@@ -49,7 +49,8 @@ class PusherService : MChannel {
     override fun register(messenger: BinaryMessenger) {
         MethodChannel(messenger, CHANNEL_NAME).setMethodCallHandler { call, result ->
             when (call.method) {
-                "init" ->  init(call, result)
+                "init" -> init(call, result)
+                "dispose" -> dispose(call, result)
                 "connect" -> connect(result)
                 "disconnect" -> disconnect(result)
                 "getSocketId" -> getSocketId(result)
@@ -72,6 +73,11 @@ class PusherService : MChannel {
                 debugLog("Event stream cancelled.")
             }
         })
+    }
+
+    private fun dispose(result: Result) {
+        _pusherInstance = null
+        result.success(null)
     }
 
     private fun init(call: MethodCall, result: Result) {

@@ -40,6 +40,8 @@ class PusherService: MChannel {
             switch call.method {
             case "init":
                 self.`init`(call, result: result)
+            case "dispose":
+                self.dispose(call, result: result)
             case "connect":
                 self.connect(result: result)
             case "disconnect":
@@ -97,6 +99,11 @@ class PusherService: MChannel {
             result(FlutterError(code: "INIT_ERROR", message: err.localizedDescription, details: err))
         }
         
+    }
+
+    func dispose(result:@escaping FlutterResult) {
+        _pusherInstance = nil
+        result(nil)
     }
     
     func connect(result:@escaping FlutterResult) {
