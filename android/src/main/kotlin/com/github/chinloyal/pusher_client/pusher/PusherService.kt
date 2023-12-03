@@ -50,7 +50,7 @@ class PusherService : MChannel {
         MethodChannel(messenger, CHANNEL_NAME).setMethodCallHandler { call, result ->
             when (call.method) {
                 "init" -> init(call, result)
-                "dispose" -> dispose(call, result)
+                "dispose" -> dispose(result)
                 "connect" -> connect(result)
                 "disconnect" -> disconnect(result)
                 "getSocketId" -> getSocketId(result)
@@ -73,11 +73,6 @@ class PusherService : MChannel {
                 debugLog("Event stream cancelled.")
             }
         })
-    }
-
-    private fun dispose(result: Result) {
-        _pusherInstance = null
-        result.success(null)
     }
 
     private fun init(call: MethodCall, result: Result) {
@@ -122,6 +117,11 @@ class PusherService : MChannel {
             debugLog("Pusher initialized")
         }
 
+        result.success(null)
+    }
+
+    private fun dispose(result: Result) {
+        _pusherInstance = null
         result.success(null)
     }
 

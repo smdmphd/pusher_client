@@ -41,7 +41,7 @@ class PusherService: MChannel {
             case "init":
                 self.`init`(call, result: result)
             case "dispose":
-                self.dispose(call, result: result)
+                self.dispose(result: result)
             case "connect":
                 self.connect(result: result)
             case "disconnect":
