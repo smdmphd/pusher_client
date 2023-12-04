@@ -81,41 +81,40 @@ class PusherService : MChannel {
         val initArgs: JSONObject = args.getJSONObject("initArgs")
         enableLogging = initArgs.getBoolean("enableLogging")
 
-        if(_pusherInstance == null) {
-            val options: JSONObject = args.getJSONObject("pusherOptions")
-            val pusherOptions = PusherOptions()
+        val options: JSONObject = args.getJSONObject("pusherOptions")
+        val pusherOptions = PusherOptions()
 
-            if (!options.isNull("auth")) {
-                val auth: JSONObject = options.getJSONObject("auth")
-                val endpoint: String = auth.getString("endpoint")
-                val headersMap: Map<String, String> = Gson().fromJson<Map<String, String>>(auth.getString("headers"), Map::class.java)
-                val encodedConnectionFactory = if (headersMap.containsValue("application/json"))
-                    JsonEncodedConnectionFactory() else UrlEncodedConnectionFactory()
+        if (!options.isNull("auth")) {
+            val auth: JSONObject = options.getJSONObject("auth")
+            val endpoint: String = auth.getString("endpoint")
+            val headersMap: Map<String, String> = Gson().fromJson<Map<String, String>>(auth.getString("headers"), Map::class.java)
+            val encodedConnectionFactory = if (headersMap.containsValue("application/json"))
+                JsonEncodedConnectionFactory() else UrlEncodedConnectionFactory()
 
-                val authorizer = HttpAuthorizer(endpoint,  encodedConnectionFactory)
-                authorizer.setHeaders(headersMap)
+            val authorizer = HttpAuthorizer(endpoint,  encodedConnectionFactory)
+            authorizer.setHeaders(headersMap)
 
-                pusherOptions.authorizer = authorizer
-            }
-
-            pusherOptions.setHost(options.getString("host"))
-
-            if(!options.isNull("cluster")) {
-                pusherOptions.setCluster(options.getString("cluster"))
-            }
-
-            pusherOptions.activityTimeout = options.getLong("activityTimeout")
-            pusherOptions.pongTimeout = options.getLong("pongTimeout")
-            pusherOptions.maxReconnectionAttempts = options.getInt("maxReconnectionAttempts")
-            pusherOptions.maxReconnectGapInSeconds = options.getInt("maxReconnectGapInSeconds")
-            pusherOptions.setWsPort(options.getInt("wsPort"))
-            pusherOptions.setWssPort(options.getInt("wssPort"))
-            pusherOptions.isUseTLS = options.getBoolean("encrypted")
-
-            _pusherInstance = Pusher(args.getString("appKey"), pusherOptions)
-
-            debugLog("Pusher initialized")
+            pusherOptions.authorizer = authorizer
         }
+
+        pusherOptions.setHost(options.getString("host"))
+
+        if(!options.isNull("cluster")) {
+            pusherOptions.setCluster(options.getString("cluster"))
+        }
+
+        pusherOptions.activityTimeout = options.getLong("activityTimeout")
+        pusherOptions.pongTimeout = options.getLong("pongTimeout")
+        pusherOptions.maxReconnectionAttempts = options.getInt("maxReconnectionAttempts")
+        pusherOptions.maxReconnectGapInSeconds = options.getInt("maxReconnectGapInSeconds")
+        pusherOptions.setWsPort(options.getInt("wsPort"))
+        pusherOptions.setWssPort(options.getInt("wssPort"))
+        pusherOptions.isUseTLS = options.getBoolean("encrypted")
+
+        _pusherInstance = Pusher(args.getString("appKey"), pusherOptions)
+
+        debugLog("Pusher initialized")
+
 
         result.success(null)
     }
